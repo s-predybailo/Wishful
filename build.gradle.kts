@@ -24,6 +24,8 @@ dependencies {
     implementation("cafe.adriel.voyager:voyager-core:1.1.0-alpha03")
     implementation("cafe.adriel.voyager:voyager-navigator-desktop:1.1.0-alpha03")
     implementation("cafe.adriel.voyager:voyager-transitions:1.1.0-alpha03")
+    // Koin для Kotlin
+    implementation("io.insert-koin:koin-core:3.5.3")
 }
 
 compose.desktop {

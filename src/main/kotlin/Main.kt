@@ -1,4 +1,7 @@
-import androidx.compose.foundation.layout.*
+
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Home
@@ -11,8 +14,12 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.FadeTransition
+import org.koin.core.context.startKoin
+import org.koin.dsl.module
+import org.koin.mp.KoinPlatform.getKoin
 import ui.CreateWishlistScreen
 import ui.HomeScreen
+import viewmodel.WishlistViewModel
 
 @Composable
 fun AppTheme(darkTheme: Boolean, content: @Composable () -> Unit) {
@@ -23,7 +30,7 @@ fun AppTheme(darkTheme: Boolean, content: @Composable () -> Unit) {
 }
 
 @Composable
-fun App() {
+fun App(wishlistViewModel: WishlistViewModel) {
     val navigator = remember { mutableStateOf<Navigator?>(null) }
     val darkTheme = remember { mutableStateOf(false) } // Добавлено состояние для переключения темы
 
@@ -36,7 +43,7 @@ fun App() {
                             label = { Text("Home") },
                             selected = navigator.value?.lastItem is HomeScreen,
                             onClick = {
-                                navigator.value?.replaceAll(HomeScreen())
+                                navigator.value?.replaceAll(HomeScreen(wishlistViewModel.wishlists, onWishlistSelected = wishlistViewModel::onWishlistSelected))
                             }
                         )
                         NavigationRailItem(
@@ -44,7 +51,7 @@ fun App() {
                             label = { Text("Create Wishlist") },
                             selected = navigator.value?.lastItem is CreateWishlistScreen,
                             onClick = {
-                                navigator.value?.replaceAll(CreateWishlistScreen())
+                                navigator.value?.replaceAll(CreateWishlistScreen(wishlistViewModel))
                             }
                         )
                         Spacer(Modifier.weight(1f))
@@ -54,7 +61,7 @@ fun App() {
                         )
                 }
                 // Основное содержимое приложения
-                Navigator(screen = HomeScreen()) { nav ->
+                Navigator(screen = HomeScreen(wishlistViewModel.wishlists, onWishlistSelected = wishlistViewModel::onWishlistSelected)) { nav ->
                     navigator.value = nav
                     FadeTransition(nav)
                 }
@@ -65,8 +72,17 @@ fun App() {
 
 
 fun main() = application {
+    val appModule = module {
+        single { WishlistViewModel() }
+    }
+
+    startKoin {
+        modules(appModule)
+    }
+
     Window(onCloseRequest = ::exitApplication, title = "Wishful") {
-        App()
+        val wishlistViewModel = getKoin().get<WishlistViewModel>()
+        App(wishlistViewModel)
     }
 }
 
