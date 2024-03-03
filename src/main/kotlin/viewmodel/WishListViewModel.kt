@@ -10,7 +10,6 @@ class WishlistViewModel {
     var items = mutableStateListOf<WishlistItem>()
     var newItemName = mutableStateOf("")
 
-    // Список вишлистов для отображения на главном экране
     var wishlists = mutableStateListOf<WishListModel>()
 
     fun addItem() {
@@ -20,7 +19,7 @@ class WishlistViewModel {
         }
     }
 
-    fun createWishlist() {
+    private fun createWishlist() {
         if (title.value.isNotBlank() && items.isNotEmpty()) {
             val newWishlist = WishListModel(id = wishlists.size + 1, title = title.value, items = items.toList())
             wishlists.add(newWishlist)
@@ -30,13 +29,6 @@ class WishlistViewModel {
         }
     }
 
-    // Метод для обработки выбора вишлиста, если вам нужно выполнить какие-либо действия при выборе
-    fun onWishlistSelected(wishlist: WishListModel) {
-        // Здесь может быть логика обработки выбранного вишлиста
-        // Например, открытие экрана деталей вишлиста или его редактирование
-    }
-
-    // Этот метод теперь использует данные из параметров для создания вишлиста
     fun onWishlistCreated() {
         createWishlist()
     }

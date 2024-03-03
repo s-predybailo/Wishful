@@ -19,6 +19,7 @@ import org.koin.dsl.module
 import org.koin.mp.KoinPlatform.getKoin
 import ui.CreateWishlistScreen
 import ui.HomeScreen
+import ui.WishlistDetailScreen
 import viewmodel.WishlistViewModel
 
 @Composable
@@ -43,7 +44,7 @@ fun App(wishlistViewModel: WishlistViewModel) {
                             label = { Text("Home") },
                             selected = navigator.value?.lastItem is HomeScreen,
                             onClick = {
-                                navigator.value?.replaceAll(HomeScreen(wishlistViewModel.wishlists, onWishlistSelected = wishlistViewModel::onWishlistSelected))
+                                navigator.value?.replaceAll(HomeScreen(wishlistViewModel.wishlists, onWishlistSelected = {navigator.value?.push(WishlistDetailScreen(it))}))
                             }
                         )
                         NavigationRailItem(
@@ -61,7 +62,9 @@ fun App(wishlistViewModel: WishlistViewModel) {
                         )
                 }
                 // Основное содержимое приложения
-                Navigator(screen = HomeScreen(wishlistViewModel.wishlists, onWishlistSelected = wishlistViewModel::onWishlistSelected)) { nav ->
+                Navigator(screen = HomeScreen(wishlistViewModel.wishlists, onWishlistSelected = { navigator.value?.push(
+                    WishlistDetailScreen(it)
+                ) })) { nav ->
                     navigator.value = nav
                     FadeTransition(nav)
                 }
