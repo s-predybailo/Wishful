@@ -44,7 +44,8 @@ fun App(wishlistViewModel: WishlistViewModel) {
                             label = { Text("Home") },
                             selected = navigator.value?.lastItem is HomeScreen,
                             onClick = {
-                                navigator.value?.replaceAll(HomeScreen(wishlistViewModel.wishlists, onWishlistSelected = {navigator.value?.push(WishlistDetailScreen(it))}))
+                                if (navigator.value?.lastItem is HomeScreen) return@NavigationRailItem
+                                navigator.value?.replaceAll(HomeScreen(wishlistViewModel, onWishlistSelected = {navigator.value?.push(WishlistDetailScreen(it, wishlistViewModel))}))
                             }
                         )
                         NavigationRailItem(
@@ -52,6 +53,7 @@ fun App(wishlistViewModel: WishlistViewModel) {
                             label = { Text("Create Wishlist") },
                             selected = navigator.value?.lastItem is CreateWishlistScreen,
                             onClick = {
+                                if (navigator.value?.lastItem is CreateWishlistScreen) return@NavigationRailItem
                                 navigator.value?.replaceAll(CreateWishlistScreen(wishlistViewModel))
                             }
                         )
@@ -62,8 +64,8 @@ fun App(wishlistViewModel: WishlistViewModel) {
                         )
                 }
                 // Основное содержимое приложения
-                Navigator(screen = HomeScreen(wishlistViewModel.wishlists, onWishlistSelected = { navigator.value?.push(
-                    WishlistDetailScreen(it)
+                Navigator(screen = HomeScreen(wishlistViewModel, onWishlistSelected = { navigator.value?.push(
+                    WishlistDetailScreen(it, wishlistViewModel)
                 ) })) { nav ->
                     navigator.value = nav
                     FadeTransition(nav)
